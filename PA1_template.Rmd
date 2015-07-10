@@ -30,7 +30,7 @@ data <- tbl_df(data)
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+```{r mean_steps_per_day}
 steps_per_day <- group_by(data, date) %>%
         summarize(total = sum(steps, na.rm = TRUE))
 
@@ -55,7 +55,7 @@ The median total number of steps per day is `r steps_per_day_median`.
 
 ## What is the average daily activity pattern?
 
-```{r}
+```{r mean_activity_pattern}
 mean_time_steps <- group_by(data, interval) %>%
         summarize(average = mean(steps, na.rm = TRUE))
 
@@ -92,7 +92,7 @@ for(i in which(is.na(impute.data$steps))) {
 }
 ```
 
-```{r}
+```{r mean_steps_impute}
 i.steps_per_day <- group_by(impute.data, date) %>%
         summarize(total = sum(steps))
 
@@ -136,7 +136,7 @@ impute.data$weekend <- factor(sapply(impute.data$date, weekend))
 
 Then plot the mean number of steps for each time interval separated by weekdays or weekends.
 
-```{r}
+```{r mean_steps_weekday}
 mean_steps_weekend <- impute.data %>%
         group_by(weekend, interval) %>%
         summarize(mean_steps = mean(steps))

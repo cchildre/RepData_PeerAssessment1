@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---  
 
 ## Required Packages
 
@@ -71,7 +76,7 @@ ggplot(steps_per_day, aes(x = total)) +
         ylab("Count")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+![plot of chunk mean_steps_per_day](figure/mean_steps_per_day-1.png) 
 
 ```r
 steps_per_day_mean <- round(mean(steps_per_day$total), 4)
@@ -95,7 +100,7 @@ ggplot(mean_time_steps, aes(x = interval, y = average)) +
         ggtitle("Average Number of Steps vs. Time Interval")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+![plot of chunk mean_activity_pattern](figure/mean_activity_pattern-1.png) 
 
 
 ```r
@@ -143,7 +148,7 @@ ggplot(i.steps_per_day, aes(x = total)) +
         ylab("Count")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+![plot of chunk mean_steps_impute](figure/mean_steps_impute-1.png) 
 
 ```r
 i.steps_per_day_mean <- round(mean(i.steps_per_day$total), 4)
@@ -197,5 +202,6 @@ weekday.plot <- ggplot(filter(mean_steps_weekend, weekend == "Weekday"),
 grid.arrange(weekday.plot, weekend.plot)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+![plot of chunk mean_steps_weekday](figure/mean_steps_weekday-1.png) 
 
+There are more steps for the same time interval on weekends than weekdays.
