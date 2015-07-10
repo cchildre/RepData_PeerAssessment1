@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----  
+# Reproducible Research: Peer Assessment 1
 
 ## Required Packages
 
@@ -12,16 +7,44 @@ This document requires the packages:
 - dplyr  
 - ggplot2  
 - gridExtra
-```{r}
+
+```r
 require(lubridate)
+```
+
+```
+## Loading required package: lubridate
+```
+
+```r
 require(dplyr, warn.conflict = FALSE)
+```
+
+```
+## Loading required package: dplyr
+```
+
+```r
 require(ggplot2)
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```r
 require(gridExtra)
+```
+
+```
+## Loading required package: gridExtra
+## Loading required package: grid
 ```
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 data <- read.csv(unz("activity.zip", "activity.csv"), as.is = TRUE)
 data$date <- ymd(data$date)
 data <- tbl_df(data)
@@ -30,7 +53,8 @@ data <- tbl_df(data)
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 steps_per_day <- group_by(data, date) %>%
         summarize(total = sum(steps, na.rm = TRUE))
 
@@ -45,17 +69,22 @@ ggplot(steps_per_day, aes(x = total)) +
                  show_guide = TRUE) +
         ggtitle("Total Steps per Day") + 
         ylab("Count")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
 steps_per_day_mean <- round(mean(steps_per_day$total), 4)
 steps_per_day_median <- median(steps_per_day$total)
 ```
 
-The mean total number of steps per day is `r steps_per_day_mean`.  
-The median total number of steps per day is `r steps_per_day_median`.  
+The mean total number of steps per day is 9354.2295.  
+The median total number of steps per day is 10395.  
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 mean_time_steps <- group_by(data, interval) %>%
         summarize(average = mean(steps, na.rm = TRUE))
 
@@ -64,27 +93,31 @@ ggplot(mean_time_steps, aes(x = interval, y = average)) +
         xlab("Time (min)") + 
         ylab("Number of Steps") + 
         ggtitle("Average Number of Steps vs. Time Interval")
-
 ```
 
-```{r}
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+
+```r
 max_int <- filter(mean_time_steps, average == max(average)) %>%
         select(interval)
 ```
 
 
-The 5-minute interval that contains the maximum average number of steps is `r max_int`.
+The 5-minute interval that contains the maximum average number of steps is 835.
 
 ## Imputing missing values
 
-```{r}
+
+```r
 total_missing <- sum(!complete.cases(data))
 ```
 
-The total number of rows missing data is `r total_missing`. We will replace the 
+The total number of rows missing data is 2304. We will replace the 
 NA values with the mean for the corresponding 5 minute time interval.
 
-```{r}
+
+```r
 impute.data <- data
 for(i in which(is.na(impute.data$steps))) {
         impute.data$steps[i] <- as.numeric(mean_time_steps[impute.data$interval[i] == 
@@ -92,7 +125,8 @@ for(i in which(is.na(impute.data$steps))) {
 }
 ```
 
-```{r}
+
+```r
 i.steps_per_day <- group_by(impute.data, date) %>%
         summarize(total = sum(steps))
 
@@ -107,13 +141,17 @@ ggplot(i.steps_per_day, aes(x = total)) +
                  show_guide = TRUE) +
         ggtitle("Total Steps per Day") + 
         ylab("Count")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+
+```r
 i.steps_per_day_mean <- round(mean(i.steps_per_day$total), 4)
 i.steps_per_day_median <- round(median(i.steps_per_day$total))
 ```
 
-The mean total number of steps per day for the imputed data is `r format(round(i.steps_per_day_mean, 4), scientific = FALSE)` which is a difference of `r i.steps_per_day_mean - steps_per_day_mean` from the original `r steps_per_day_mean`.  
-The median total number of steps per day for the imputed data is `r as.integer(i.steps_per_day_median)` which is a difference of `r i.steps_per_day_median - steps_per_day_median` from the original `r steps_per_day_median`.  
+The mean total number of steps per day for the imputed data is 10766.19 which is a difference of 1411.9592 from the original 9354.2295.  
+The median total number of steps per day for the imputed data is 10766 which is a difference of 371 from the original 10395.  
 
 Imputing the data caused an increase in both mean and median, and shifting them such that they are equal to each other.  
 
@@ -121,7 +159,8 @@ Imputing the data caused an increase in both mean and median, and shifting them 
 
 First, we assign a new variable to the data marking that the date is either on a weekday or weekend.  
 
-```{r}
+
+```r
 weekend <- function(date) {
         if(weekdays(date, abbreviate = TRUE) %in% c("Sat", "Sun")) {
                 return("Weekend")
@@ -131,12 +170,12 @@ weekend <- function(date) {
 }
 
 impute.data$weekend <- factor(sapply(impute.data$date, weekend))
-
 ```
 
 Then plot the mean number of steps for each time interval separated by weekdays or weekends.
 
-```{r}
+
+```r
 mean_steps_weekend <- impute.data %>%
         group_by(weekend, interval) %>%
         summarize(mean_steps = mean(steps))
@@ -158,4 +197,5 @@ weekday.plot <- ggplot(filter(mean_steps_weekend, weekend == "Weekday"),
 grid.arrange(weekday.plot, weekend.plot)
 ```
 
-There are more steps for the same time interval on weekends than weekdays.
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+
